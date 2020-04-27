@@ -23,22 +23,33 @@ define('APP_TITLE', 'Tiny File Manager');
 $use_auth = true;
 
 // Login user name and password
-// Users: array('Username' => 'Password', 'Username2' => 'Password2', ...)
-// Generate secure password hash - https://tinyfilemanager.github.io/docs/pwd.html
-$auth_users = array(
-    'admin' => '$2y$10$/K.hjNr84lLNDt8fTXjoI.DBp6PpeyoJ.mGwrrLuCZfAwfSAGqhOW', //admin@123
-    'user' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO' //12345
-);
+$auth_users = array();
 
 // Readonly users 
-// e.g. array('users', 'guest', ...)
-$readonly_users = array(
-    'user'
-);
+$readonly_users = array();
 
 // user specific directories
-// array('Username' => 'Directory path', 'Username2' => 'Directory path', ...)
 $directories_users = array();
+
+// Parse config file
+$json = file_get_contents('/config.json');
+$json_data = json_decode($json,true);
+
+// Default timezone for date() and time()
+// Doc - http://php.net/manual/en/timezones.php
+$default_timezone = $json_data['default_timezone'];
+
+$auth_users = array();
+$directory_users = array();
+
+// Apply user auths
+foreach ($json_data['auth_users'] as $value) {
+    $username = $value['username'];
+    $password = $value['password'];
+    $userdir = $value['userdir'];
+    $auth_users[$username] = password_hash($password, PASSWORD_DEFAULT);
+    $directory_users[$username] = $userdir;
+}
 
 // Enable highlight.js (https://highlightjs.org/) on view's page
 $use_highlightjs = true;
@@ -48,10 +59,6 @@ $highlightjs_style = 'vs';
 
 // Enable ace.js (https://ace.c9.io/) on view's page
 $edit_files = true;
-
-// Default timezone for date() and time()
-// Doc - http://php.net/manual/en/timezones.php
-$default_timezone = 'Etc/UTC'; // UTC
 
 // Root path for file manager
 // use absolute path of directory i.e: '/var/www/folder' or $_SERVER['DOCUMENT_ROOT'].'/folder'
