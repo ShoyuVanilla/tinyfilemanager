@@ -39,16 +39,13 @@ $json_data = json_decode($json,true);
 // Doc - http://php.net/manual/en/timezones.php
 $default_timezone = $json_data['default_timezone'];
 
-$auth_users = array();
-$directory_users = array();
-
 // Apply user auths
 foreach ($json_data['auth_users'] as $value) {
     $username = $value['username'];
     $password = $value['password'];
     $userdir = $value['userdir'];
     $auth_users[$username] = password_hash($password, PASSWORD_DEFAULT);
-    $directory_users[$username] = $userdir;
+    $directories_users[$username] = $userdir;
 }
 
 // Enable highlight.js (https://highlightjs.org/) on view's page
